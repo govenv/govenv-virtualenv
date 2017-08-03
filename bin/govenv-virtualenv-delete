@@ -2,24 +2,24 @@
 #
 # Summary: Uninstall a specific Python virtualenv
 #
-# Usage: pyenv virtualenv-delete [-f|--force] <virtualenv>
+# Usage: govenv virtualenv-delete [-f|--force] <virtualenv>
 #
 #    -f  Attempt to remove the specified virtualenv without prompting
 #        for confirmation. If the virtualenv does not exist, do not
 #        display an error message.
 #
-# See `pyenv virtualenvs` for a complete list of installed versions.
+# See `govenv virtualenvs` for a complete list of installed versions.
 #
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[ -n "$GOVENV_DEBUG" ] && set -x
 
-if [ -z "${PYENV_ROOT}" ]; then
-  PYENV_ROOT="$(pyenv-root)"
+if [ -z "${GOVENV_ROOT}" ]; then
+  GOVENV_ROOT="$(govenv-root)"
 fi
 
-# Provide pyenv completions
+# Provide govenv completions
 if [ "$1" = "--complete" ]; then
-  exec pyenv virtualenvs --bare
+  exec govenv virtualenvs --bare
 fi
 
 resolve_link() {
@@ -27,12 +27,12 @@ resolve_link() {
 }
 
 usage() {
-  pyenv-help virtualenv-delete 2>/dev/null
+  govenv-help virtualenv-delete 2>/dev/null
   [ -z "$1" ] || exit "$1"
 }
 
-if [ -z "$PYENV_ROOT" ]; then
-  PYENV_ROOT="${HOME}/.pyenv"
+if [ -z "$GOVENV_ROOT" ]; then
+  GOVENV_ROOT="${HOME}/.govenv"
 fi
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -55,10 +55,10 @@ case "$DEFINITION" in
 esac
 
 VERSION_NAME="${DEFINITION##*/}"
-COMPAT_PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+COMPAT_PREFIX="${GOVENV_ROOT}/versions/${VERSION_NAME}"
 
 if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
-  PREFIX="${PYENV_ROOT}/versions/${DEFINITION}"
+  PREFIX="${GOVENV_ROOT}/versions/${DEFINITION}"
   if [ -L "${COMPAT_PREFIX}" ]; then
     if [[ "${PREFIX}" != "$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)" ]]; then
       unset COMPAT_PREFIX
@@ -67,16 +67,16 @@ if [[ "${DEFINITION}" != "${DEFINITION%/envs/*}" ]]; then
 else
   if [ -L "${COMPAT_PREFIX}" ]; then
     PREFIX="$(resolve_link "${COMPAT_PREFIX}" 2>/dev/null || true)"
-    if [[ "${PREFIX%/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
-      echo "pyenv-virtualenv: \`${COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
+    if [[ "${PREFIX%/*/envs/*}" != "${GOVENV_ROOT}/versions" ]]; then
+      echo "govenv-virtualenv: \`${COMPAT_PREFIX}' is a symlink for unknown location." 1>&2
       exit 1
     fi
   else
-    if pyenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
-      PREFIX="${PYENV_ROOT}/versions/${VERSION_NAME}"
+    if govenv-virtualenv-prefix "${VERSION_NAME}" 1>/dev/null 2>&1; then
+      PREFIX="${GOVENV_ROOT}/versions/${VERSION_NAME}"
       unset COMPAT_PREFIX
     else
-      echo "pyenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
+      echo "govenv-virtualenv: \`${DEFINITION}' is not a virtualenv." 1>&2
       exit 1
     fi
   fi
@@ -84,11 +84,11 @@ fi
 
 if [ -z "$FORCE" ]; then
   if [ ! -d "$PREFIX" ]; then
-    echo "pyenv-virtualenv: virtualenv \`$VERSION_NAME' not installed" >&2
+    echo "govenv-virtualenv: virtualenv \`$VERSION_NAME' not installed" >&2
     exit 1
   fi
 
-  read -p "pyenv-virtualenv: remove $PREFIX? "
+  read -p "govenv-virtualenv: remove $PREFIX? "
   case "$REPLY" in
   y* | Y* ) ;;
   * ) exit 1 ;;
@@ -100,5 +100,5 @@ if [ -d "$PREFIX" ]; then
   if [ -L "$COMPAT_PREFIX" ]; then
     rm -rf "$COMPAT_PREFIX"
   fi
-  pyenv-rehash
+  govenv-rehash
 fi

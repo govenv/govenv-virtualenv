@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# Summary: Display real_prefix for a Python virtualenv version
+# Usage: govenv virtualenv-prefix [<virtualenv>]
+#
+
+set -e
+[ -n "$GOVENV_DEBUG" ] && set -x
+
+if [ -z "$GOVENV_ROOT" ]; then
+  GOVENV_ROOT="${HOME}/.govenv"
+fi
+
+if [ -n "$1" ]; then
+  versions=($@)
+  IFS=: GOVENV_VERSION="${versions[*]}"
+  export GOVENV_VERSION
+else
+  IFS=: versions=($(govenv-version-name))
+fi
+
+VIRTUALENV_PREFIX_PATHS=()
+for version in "${versions[@]}"; do
+  if [ "$version" = "system" ]; then
+    echo "govenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+    exit 1
+  fi
+  GOVENV_PREFIX_PATH="$(govenv-prefix "${version}")"
+  if [ -x "${GOVENV_PREFIX_PATH}/bin/python" ]; then
+    if [ -f "${GOVENV_PREFIX_PATH}/bin/activate" ]; then
+      if [ -f "${GOVENV_PREFIX_PATH}/bin/conda" ]; then
+        # conda
+        VIRTUALENV_PREFIX_PATH="${GOVENV_PREFIX_PATH}"
+      else
+        if [ -f "${GOVENV_ROOT}/versions/${version}/pyvenv.cfg" ]; then
+          # venv
+          virtualenv_binpath="$(cut -b 1-1024 "${GOVENV_ROOT}/versions/${version}/pyvenv.cfg" | sed -n '/^ *home *= */s///p' || true)"
+          VIRTUALENV_PREFIX_PATH="${virtualenv_binpath%/bin}"
+        else
+          # virtualenv
+          if [ -d "${GOVENV_ROOT}/versions/${version}/Lib" ]; then
+            # jython
+            virtualenv_libpath="${GOVENV_ROOT}/versions/${version}/Lib"
+          else
+            if [ -d "${GOVENV_ROOT}/versions/${version}/lib-python" ]; then
+              # pypy
+              virtualenv_libpath="${GOVENV_ROOT}/versions/${version}/lib-python"
+            else
+              virtualenv_libpath="${GOVENV_ROOT}/versions/${version}/lib"
+            fi
+          fi
+          virtualenv_orig_prefix="$(find "${virtualenv_libpath}/" -maxdepth 2 -type f -and -name "orig-prefix.txt" 2>/dev/null | head -1)"
+          if [ -f "${virtualenv_orig_prefix}" ]; then
+            VIRTUALENV_PREFIX_PATH="$(cat "${virtualenv_orig_prefix}" 2>/dev/null || true)"
+          fi
+        fi
+      fi
+      if [ -d "${VIRTUALENV_PREFIX_PATH}" ]; then
+        VIRTUALENV_PREFIX_PATHS=("${VIRTUALENV_PREFIX_PATHS[@]}" "${VIRTUALENV_PREFIX_PATH:-${GOVENV_PREFIX_PATH}}")
+      else
+        echo "govenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+        exit 1
+      fi
+    else
+      echo "govenv-virtualenv: version \`${version}' is not a virtualenv" 1>&2
+      exit 1
+    fi
+  else
+    echo "govenv-virtualenv: \`python' not found in version \`${version}'" 1>&2
+    exit 1
+  fi
+done
+
+IFS=: echo "${VIRTUALENV_PREFIX_PATHS[*]}"

@@ -6,7 +6,7 @@
 
 #### 1.0.0
 
-* Use similar versioning scheme as pyenv; YYYYMMDD -> X.Y.Z
+* Use similar versioning scheme as govenv; YYYYMMDD -> X.Y.Z
 
 #### 20160716
 
@@ -22,7 +22,7 @@
 
 #### 20160202
 
-* Install virtualenv 13.1.2 for CPython/Stackless 3.2.x (yyuu/pyenv#531)
+* Install virtualenv 13.1.2 for CPython/Stackless 3.2.x (yyuu/govenv#531)
 
 #### 20160112
 
@@ -36,10 +36,10 @@
 
 * Improved interoperability with Anaconda/Miniconda (#103, #106, #107, #108)
 * Create `virtualenv` inside `envs` directory of source version, like Anaconda/Miniconda (#103, #107)
-* Rewrite `pyenv activate` and `pyenv deactivate` without using scripts provided by virtualenv and conda (#51, #69, #103, #104, #121)
-* Improve the `pyenv activate` behaviour on multipe versions (#105, #111)
-* Reject creating a virtualenv named `system` (yyuu/pyenv#475)
-* Add `--skip-aliases` to `pyenv virtualenvs` (#120)
+* Rewrite `govenv activate` and `govenv deactivate` without using scripts provided by virtualenv and conda (#51, #69, #103, #104, #121)
+* Improve the `govenv activate` behaviour on multipe versions (#105, #111)
+* Reject creating a virtualenv named `system` (yyuu/govenv#475)
+* Add `--skip-aliases` to `govenv virtualenvs` (#120)
 * Stop showing `version not installed` warning messages in precmd (#49)
 
 #### 20151103
@@ -52,8 +52,8 @@
 
 * Ignore user's site-packages on ensurepip/get-pip (#89)
 * Find `python-config` from source version if current version is a virtualenv
-* Fix pyenv-virtualenv-init script for fish where command was in string and not being evaluated (#98)
-* Add foolproof for `-p` argument. (yyuu/pyenv#98)
+* Fix govenv-virtualenv-init script for fish where command was in string and not being evaluated (#98)
+* Add foolproof for `-p` argument. (yyuu/govenv#98)
 
 #### 20150719
 
@@ -64,25 +64,25 @@
 #### 20150526
 
 * Use `typeset -g` with `precmd_functions` (#75)
-* activate: display setup instructions only with `PYENV_VIRTUALENV_INIT=0` (#78)
-* Ignore failure of pyenv activate (#68)
+* activate: display setup instructions only with `GOVENV_VIRTUALENV_INIT=0` (#78)
+* Ignore failure of govenv activate (#68)
 
 #### 20150119
 
- * Ignore errors from `pyenv-version-name` since it might fail if there is configuration error (yyuu/pyenv#291)
+ * Ignore errors from `govenv-version-name` since it might fail if there is configuration error (yyuu/govenv#291)
  * The _shell_ version set in `activate` should be unset in `deactivate` (#61)
  * Anaconda has `activate` script nevertheless it is not a virtual environment (#65)
 
 #### 20141106
 
  * Stop creating after `ensurepip` since it has done by `ensurepip` itself
- * Suppress some useless warnings from `pyenv virtualenv-init`
+ * Suppress some useless warnings from `govenv virtualenv-init`
 
 #### 20141012
 
  * Fix warnings from `shellcheck` to improve support for POSIX sh (#40)
  * Do not allow whitespace in `VIRTUALENV_NAME` (#44)
- * Should not persist `PYENV_DEACTIVATE` after automatic deactivation (#47, #48)
+ * Should not persist `GOVENV_DEACTIVATE` after automatic deactivation (#47, #48)
 
 #### 20140705
 
@@ -90,17 +90,17 @@
  * Support manual (de)?activation with auto-activation enabled (#32, #34)
  * Exit as error when (de)?activation failed
  * Use https://bootstrap.pypa.io/ to install setuptools and pip
- * Create backup of original virtualenv within `$(pyenv root)/versions` when `--upgrade`
+ * Create backup of original virtualenv within `$(govenv root)/versions` when `--upgrade`
 
 #### 20140615
 
- * Fix incompatibility issue of `pyenv activate` and `pyenv deactivate` (#26)
- * Workaround for the issue with pyenv-which-ext (#26)
+ * Fix incompatibility issue of `govenv activate` and `govenv deactivate` (#26)
+ * Workaround for the issue with govenv-which-ext (#26)
 
 #### 20140614
 
- * Add `pyenv virtualenv-init` to enable auto-activation feature (#24)
- * Create symlinks for executables with version suffix (yyuu/pyenv#182)
+ * Add `govenv virtualenv-init` to enable auto-activation feature (#24)
+ * Create symlinks for executables with version suffix (yyuu/govenv#182)
 
 #### 20140602
 
@@ -109,13 +109,13 @@
 
 #### 20140421
 
- * Display error if `pyenv activate` was invoked as a command
- * Fix completion of `pyenv activate` (#15)
- * Use `virtualenv` instead of `pyvenv` if `-p` has given (yyuu/pyenv#158)
+ * Display error if `govenv activate` was invoked as a command
+ * Fix completion of `govenv activate` (#15)
+ * Use `virtualenv` instead of `pyvenv` if `-p` has given (yyuu/govenv#158)
 
 #### 20140123
 
- * Add `activate` and `deactivate` to make `pyenv-virtualenv` work with [jedi](https://github.com/davidhalter/jedi) (#9)
+ * Add `activate` and `deactivate` to make `govenv-virtualenv` work with [jedi](https://github.com/davidhalter/jedi) (#9)
  * Use `ensurepip` to install `pip` if it is available
  * Unset `PIP_REQUIRE_VENV` to avoid problem on the installation of `virtualenv` (#10)
  * Add tests
@@ -135,19 +135,19 @@
 
 #### 20130622
 
- * Removed bundled `virtualenv.py` script. Now pyenv-virtualenv installs `virtualenv` package into source version and then use it.
+ * Removed bundled `virtualenv.py` script. Now govenv-virtualenv installs `virtualenv` package into source version and then use it.
  * On Python 3.3+, use `pyvenv` as virtualenv command if `virtualenv` is not available.
  * Install setuptools and pip into environments created by `pyvenv`.
 
 #### 20130614
 
- * Add `pyenv virtualenvs` to list all virtualenv versions.
+ * Add `govenv virtualenvs` to list all virtualenv versions.
  * *EXPERIMENTAL*: Add `--upgrade` option to re-create virtualenv with migrating packages
 
 #### 20130527
 
  * Remove `python-virtualenv` which was no longer used.
- * Change the installation path of the `virtualenv.py` script. (`./libexec` -> `./libexec/pyenv-virtualenv/${VIRTUALENV_VERSION}`)
+ * Change the installation path of the `virtualenv.py` script. (`./libexec` -> `./libexec/govenv-virtualenv/${VIRTUALENV_VERSION}`)
  * Download `virtualenv.py` if desired version has not been installed.
 
 #### 20130507
@@ -157,14 +157,14 @@
 
 #### 20130307
 
- * Rename the project; `s/python-virtualenv/pyenv-virtualenv/g`
- * The `pyenv-virtualenv` script is not depending on `python-virtualenv` now.
+ * Rename the project; `s/python-virtualenv/govenv-virtualenv/g`
+ * The `govenv-virtualenv` script is not depending on `python-virtualenv` now.
    `python-virtualenv` will left for compatibility and will not continue for future releases.
  * Update virtualenv version; 1.8.2 -> 1.8.4
 
 #### 20130218
 
- * Add pyenv 0.2.x (rbenv 0.4.x) style help messages.
+ * Add govenv 0.2.x (rbenv 0.4.x) style help messages.
 
 #### 20121023
 

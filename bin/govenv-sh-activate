@@ -2,20 +2,20 @@
 #
 # Summary: Activate virtual environment
 #
-# Usage: pyenv activate <virtualenv>
-#        pyenv activate --unset
+# Usage: govenv activate <virtualenv>
+#        govenv activate --unset
 #
 # Activate a Python virtualenv environment in current shell.
-# This acts almost as same as `pyenv shell`, but this invokes the `activate`
+# This acts almost as same as `govenv shell`, but this invokes the `activate`
 # script in your shell.
 #
-# <virtualenv> should be a string matching a Python version known to pyenv.
+# <virtualenv> should be a string matching a Python version known to govenv.
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[ -n "$GOVENV_DEBUG" ] && set -x
 
-if [ -z "${PYENV_ROOT}" ]; then
-  PYENV_ROOT="$(pyenv-root)"
+if [ -z "${GOVENV_ROOT}" ]; then
+  GOVENV_ROOT="$(govenv-root)"
 fi
 
 resolve_link() {
@@ -28,9 +28,9 @@ unset QUIET
 while [ $# -gt 0 ]; do
   case "$1" in
   "--complete" )
-    # Provide pyenv completions
+    # Provide govenv completions
     echo --unset
-    exec pyenv-virtualenvs --bare
+    exec govenv-virtualenvs --bare
     ;;
   "-f" | "--force" )
     FORCE=1
@@ -39,11 +39,11 @@ while [ $# -gt 0 ]; do
     QUIET=1
     ;;
   "--unset" )
-    exec pyenv-sh-deactivate
+    exec govenv-sh-deactivate
     ;;
   "-v" | "--verbose" )
     unset QUIET
-    PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
+    GOVENV_VIRTUALENV_VERBOSE_ACTIVATE=1
     ;;
   * )
     break
@@ -57,24 +57,24 @@ versions=("$@")
 if [ -z "${versions}" ]; then
   no_shell=1
   OLDIFS="$IFS"
-  IFS=: versions=($(pyenv-version-name 2>/dev/null))
+  IFS=: versions=($(govenv-version-name 2>/dev/null))
   IFS="$OLDIFS"
 fi
 
-if [ -z "${PYENV_VIRTUALENV_INIT}" ]; then
+if [ -z "${GOVENV_VIRTUALENV_INIT}" ]; then
   # Backward compatibility issue
-  # https://github.com/yyuu/pyenv-virtualenv/issues/26
+  # https://github.com/yyuu/govenv-virtualenv/issues/26
   no_shell=
 fi
 
 venv="${versions}"
 
 if [ -n "${VIRTUAL_ENV}" ]; then
-  # exit as success if some virtualenv is already activated outside from pyenv-virtualenv
-  if [ -z "${PYENV_VIRTUAL_ENV}" ]; then
+  # exit as success if some virtualenv is already activated outside from govenv-virtualenv
+  if [ -z "${GOVENV_VIRTUAL_ENV}" ]; then
     if [ -z "${FORCE}" ]; then
       if [ -z "${QUIET}" ]; then
-        echo "pyenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2
+        echo "govenv-virtualenv: virtualenv \`${VIRTUAL_ENV}' is already activated" 1>&2
       fi
       echo "true"
       exit 0
@@ -82,18 +82,18 @@ if [ -n "${VIRTUAL_ENV}" ]; then
   fi
 fi
 
-if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
+if ! govenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
   # fallback to virtualenv of current version
   OLDIFS="$IFS"
-  IFS=: current_versions=($(pyenv-version-name))
+  IFS=: current_versions=($(govenv-version-name))
   IFS="$OLDIFS"
   new_venv="${current_versions%/envs/*}/envs/${venv}"
-  if pyenv-virtualenv-prefix "${new_venv}" 1>/dev/null 2>&1; then
+  if govenv-virtualenv-prefix "${new_venv}" 1>/dev/null 2>&1; then
     venv="${new_venv}"
     versions[0]="${new_venv}"
   else
     if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
+      echo "govenv-virtualenv: version \`${venv}' is not a virtualenv" 1>&2
     fi
     echo "false"
     exit 1
@@ -101,12 +101,12 @@ if ! pyenv-virtualenv-prefix "${venv}" 1>/dev/null 2>&1; then
 fi
 
 # exit as error if there are multiple virtualenvs
-# https://github.com/yyuu/pyenv-virtualenv/issues/105
+# https://github.com/yyuu/govenv-virtualenv/issues/105
 for version in "${versions[@]}"; do
   if [[ "${version}" != "${venv}" ]]; then
-    if pyenv-virtualenv-prefix "${version}" 1>/dev/null 2>&1; then
+    if govenv-virtualenv-prefix "${version}" 1>/dev/null 2>&1; then
       if [ -z "${QUIET}" ]; then
-        echo "pyenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
+        echo "govenv-virtualenv: cannot activate multiple versions at once: ${versions[@]}" 1>&2
       fi
       echo "false"
       exit 1
@@ -114,8 +114,8 @@ for version in "${versions[@]}"; do
   fi
 done
 
-shell="${PYENV_SHELL:-${SHELL##*/}}"
-prefix="$(pyenv-prefix "${venv}")"
+shell="${GOVENV_SHELL:-${SHELL##*/}}"
+prefix="$(govenv-prefix "${venv}")"
 
 if [ -L "${prefix}" ]; then
   prefix="$(resolve_link "${prefix}" 2>/dev/null)"
@@ -125,35 +125,35 @@ fi
 if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   if [ -z "${FORCE}" ]; then
     if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: version \`${venv}' is already activated" 1>&2
+      echo "govenv-virtualenv: version \`${venv}' is already activated" 1>&2
     fi
     echo "true"
     exit 0
   fi
 fi
 
-pyenv-sh-deactivate --force --quiet || true
+govenv-sh-deactivate --force --quiet || true
 
-if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
-  echo "pyenv-virtualenv: activate ${venv}" 1>&2
+if [ -n "$GOVENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
+  echo "govenv-virtualenv: activate ${venv}" 1>&2
 fi
 
 if [ -z "$no_shell" ]; then
-  # shell version set in pyenv-sh-activate should be unset
-  # https://github.com/yyuu/pyenv-virtualenv/issues/61
+  # shell version set in govenv-sh-activate should be unset
+  # https://github.com/yyuu/govenv-virtualenv/issues/61
   OLDIFS="$IFS"
   IFS=:
   case "$shell" in
   fish )
     cat <<EOS
-set -gx PYENV_VERSION "${versions[*]}";
-set -gx PYENV_ACTIVATE_SHELL 1;
+set -gx GOVENV_VERSION "${versions[*]}";
+set -gx GOVENV_ACTIVATE_SHELL 1;
 EOS
     ;;
   * )
     cat <<EOS
-export PYENV_VERSION="${versions[*]}";
-export PYENV_ACTIVATE_SHELL=1;
+export GOVENV_VERSION="${versions[*]}";
+export GOVENV_ACTIVATE_SHELL=1;
 EOS
     ;;
   esac
@@ -164,13 +164,13 @@ fi
 case "${shell}" in
 fish )
   cat <<EOS
-set -gx PYENV_VIRTUAL_ENV "${prefix}";
+set -gx GOVENV_VIRTUAL_ENV "${prefix}";
 set -gx VIRTUAL_ENV "${prefix}";
 EOS
   ;;
 * )
   cat <<EOS
-export PYENV_VIRTUAL_ENV="${prefix}";
+export GOVENV_VIRTUAL_ENV="${prefix}";
 export VIRTUAL_ENV="${prefix}";
 EOS
   ;;
@@ -210,19 +210,19 @@ EOS
   esac
 fi
 
-PYENV_VIRTUALENV_DISABLE_PROMPT="${PYENV_VIRTUALENV_DISABLE_PROMPT:-${PYENV_VIRTUAL_ENV_DISABLE_PROMPT}}"
-PYENV_VIRTUALENV_DISABLE_PROMPT="${PYENV_VIRTUALENV_DISABLE_PROMPT:-${VIRTUAL_ENV_DISABLE_PROMPT}}"
+GOVENV_VIRTUALENV_DISABLE_PROMPT="${GOVENV_VIRTUALENV_DISABLE_PROMPT:-${GOVENV_VIRTUAL_ENV_DISABLE_PROMPT}}"
+GOVENV_VIRTUALENV_DISABLE_PROMPT="${GOVENV_VIRTUALENV_DISABLE_PROMPT:-${VIRTUAL_ENV_DISABLE_PROMPT}}"
 
-if [ -z "${PYENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
+if [ -z "${GOVENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
   case "${shell}" in
   fish )
     if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: prompt changing not working for fish." 1>&2
+      echo "govenv-virtualenv: prompt changing not working for fish." 1>&2
     fi
     ;;
   * )
     if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: prompt changing will be removed from future release. configure \`export PYENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2
+      echo "govenv-virtualenv: prompt changing will be removed from future release. configure \`export GOVENV_VIRTUALENV_DISABLE_PROMPT=1' to simulate the behavior." 1>&2
     fi
     cat <<EOS
 export _OLD_VIRTUAL_PS1="\${PS1}";

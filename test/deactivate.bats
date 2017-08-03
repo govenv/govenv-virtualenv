@@ -3,32 +3,32 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/pyenv"
-  unset PYENV_VERSION
-  unset PYENV_ACTIVATE_SHELL
-  unset PYENV_VIRTUAL_ENV
+  export GOVENV_ROOT="${TMP}/govenv"
+  unset GOVENV_VERSION
+  unset GOVENV_ACTIVATE_SHELL
+  unset GOVENV_VIRTUAL_ENV
   unset VIRTUAL_ENV
   unset CONDA_DEFAULT_ENV
   unset PYTHONHOME
   unset _OLD_VIRTUAL_PYTHONHOME
-  unset PYENV_VIRTUALENV_VERBOSE_ACTIVATE
-  unset PYENV_VIRTUALENV_DISABLE_PROMPT
-  unset PYENV_VIRTUAL_ENV_DISABLE_PROMPT
+  unset GOVENV_VIRTUALENV_VERBOSE_ACTIVATE
+  unset GOVENV_VIRTUALENV_DISABLE_PROMPT
+  unset GOVENV_VIRTUAL_ENV_DISABLE_PROMPT
   unset VIRTUAL_ENV_DISABLE_PROMPT
   unset _OLD_VIRTUAL_PS1
 }
 
 @test "deactivate virtualenv" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate
+  GOVENV_SHELL="bash" run govenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -49,16 +49,16 @@ EOS
 }
 
 @test "deactivate virtualenv (quiet)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --quit
+  GOVENV_SHELL="bash" run govenv-sh-deactivate --quit
 
   assert_success
   assert_output <<EOS
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -79,18 +79,18 @@ EOS
 }
 
 @test "deactivate virtualenv (verbose)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
-  export PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_VERBOSE_ACTIVATE=1
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --verbose
+  GOVENV_SHELL="bash" run govenv-sh-deactivate --verbose
 
   assert_success
   assert_output <<EOS
-pyenv-virtualenv: deactivate venv
-unset PYENV_VIRTUAL_ENV;
+govenv-virtualenv: deactivate venv
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -111,16 +111,16 @@ EOS
 }
 
 @test "deactivate virtualenv (quiet)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --quiet
+  GOVENV_SHELL="bash" run govenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -141,18 +141,18 @@ EOS
 }
 
 @test "deactivate virtualenv (with shell activation)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=1
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=1
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate
+  GOVENV_SHELL="bash" run govenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-unset PYENV_VERSION;
-unset PYENV_ACTIVATE_SHELL;
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VERSION;
+unset GOVENV_ACTIVATE_SHELL;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -173,18 +173,18 @@ EOS
 }
 
 @test "deactivate virtualenv (with shell activation) (quiet)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=1
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=1
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate --quiet
+  GOVENV_SHELL="bash" run govenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
-unset PYENV_VERSION;
-unset PYENV_ACTIVATE_SHELL;
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VERSION;
+unset GOVENV_ACTIVATE_SHELL;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -205,16 +205,16 @@ EOS
 }
 
 @test "deactivate virtualenv which has been activated manually" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="bash" run pyenv-sh-deactivate
+  GOVENV_SHELL="bash" run govenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 if [ -n "\${_OLD_VIRTUAL_PATH}" ]; then
   export PATH="\${_OLD_VIRTUAL_PATH}";
@@ -235,16 +235,16 @@ EOS
 }
 
 @test "deactivate virtualenv (fish)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate
+  GOVENV_SHELL="fish" run govenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-set -e PYENV_VIRTUAL_ENV;
+set -e GOVENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   set -gx PATH "\$_OLD_VIRTUAL_PATH";
@@ -261,16 +261,16 @@ EOS
 }
 
 @test "deactivate virtualenv (fish) (quiet)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate --quiet
+  GOVENV_SHELL="fish" run govenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
-set -e PYENV_VIRTUAL_ENV;
+set -e GOVENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   set -gx PATH "\$_OLD_VIRTUAL_PATH";
@@ -287,18 +287,18 @@ EOS
 }
 
 @test "deactivate virtualenv (fish) (with shell activation)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=1
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=1
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate
+  GOVENV_SHELL="fish" run govenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-set -e PYENV_VERSION;
-set -e PYENV_ACTIVATE_SHELL;
-set -e PYENV_VIRTUAL_ENV;
+set -e GOVENV_VERSION;
+set -e GOVENV_ACTIVATE_SHELL;
+set -e GOVENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   set -gx PATH "\$_OLD_VIRTUAL_PATH";
@@ -315,18 +315,18 @@ EOS
 }
 
 @test "deactivate virtualenv (fish) (with shell activation) (quiet)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=1
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=1
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate --quiet
+  GOVENV_SHELL="fish" run govenv-sh-deactivate --quiet
 
   assert_success
   assert_output <<EOS
-set -e PYENV_VERSION;
-set -e PYENV_ACTIVATE_SHELL;
-set -e PYENV_VIRTUAL_ENV;
+set -e GOVENV_VERSION;
+set -e GOVENV_ACTIVATE_SHELL;
+set -e GOVENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   set -gx PATH "\$_OLD_VIRTUAL_PATH";
@@ -343,16 +343,16 @@ EOS
 }
 
 @test "deactivate virtualenv which has been activated manually (fish)" {
-  export PYENV_VIRTUALENV_INIT=1
-  export PYENV_VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export VIRTUAL_ENV="${PYENV_ROOT}/versions/venv"
-  export PYENV_ACTIVATE_SHELL=
+  export GOVENV_VIRTUALENV_INIT=1
+  export GOVENV_VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export VIRTUAL_ENV="${GOVENV_ROOT}/versions/venv"
+  export GOVENV_ACTIVATE_SHELL=
 
-  PYENV_SHELL="fish" run pyenv-sh-deactivate
+  GOVENV_SHELL="fish" run govenv-sh-deactivate
 
   assert_success
   assert_output <<EOS
-set -e PYENV_VIRTUAL_ENV;
+set -e GOVENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 if [ -n "\$_OLD_VIRTUAL_PATH" ];
   set -gx PATH "\$_OLD_VIRTUAL_PATH";
@@ -369,7 +369,7 @@ EOS
 }
 
 @test "should fail if deactivate is invoked as a command" {
-  run pyenv-deactivate
+  run govenv-deactivate
 
   assert_failure
 }

@@ -2,18 +2,18 @@
 #
 # Summary: Deactivate virtual environment
 #
-# Usage: pyenv deactivate
+# Usage: govenv deactivate
 #
 # Deactivate a Python virtual environment.
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[ -n "$GOVENV_DEBUG" ] && set -x
 
 { printf "\x1B[31;1m"
   echo
   echo "Failed to deactivate virtualenv."
   echo
-  echo "Perhaps pyenv-virtualenv has not been loaded into your shell properly."
+  echo "Perhaps govenv-virtualenv has not been loaded into your shell properly."
   echo "Please restart current shell and try again."
   echo
   printf "\x1B[0m"

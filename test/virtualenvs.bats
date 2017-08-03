@@ -3,40 +3,40 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/pyenv"
-  mkdir -p "${PYENV_ROOT}/versions/2.7.6"
-  mkdir -p "${PYENV_ROOT}/versions/3.3.3"
-  mkdir -p "${PYENV_ROOT}/versions/venv27"
-  mkdir -p "${PYENV_ROOT}/versions/venv33"
+  export GOVENV_ROOT="${TMP}/govenv"
+  mkdir -p "${GOVENV_ROOT}/versions/2.7.6"
+  mkdir -p "${GOVENV_ROOT}/versions/3.3.3"
+  mkdir -p "${GOVENV_ROOT}/versions/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/venv33"
 }
 
 @test "list virtual environments only" {
-  stub pyenv-version-name ": echo system"
-  stub pyenv-virtualenv-prefix "2.7.6 : false"
-  stub pyenv-virtualenv-prefix "3.3.3 : false"
-  stub pyenv-virtualenv-prefix "venv27 : echo \"${PYENV_ROOT}/versions/2.7.6\""
-  stub pyenv-virtualenv-prefix "venv33 : echo \"${PYENV_ROOT}/versions/3.3.3\""
+  stub govenv-version-name ": echo system"
+  stub govenv-virtualenv-prefix "2.7.6 : false"
+  stub govenv-virtualenv-prefix "3.3.3 : false"
+  stub govenv-virtualenv-prefix "venv27 : echo \"${GOVENV_ROOT}/versions/2.7.6\""
+  stub govenv-virtualenv-prefix "venv33 : echo \"${GOVENV_ROOT}/versions/3.3.3\""
 
-  run pyenv-virtualenvs
+  run govenv-virtualenvs
 
   assert_success
   assert_output <<OUT
-  venv27 (created from ${PYENV_ROOT}/versions/2.7.6)
-  venv33 (created from ${PYENV_ROOT}/versions/3.3.3)
+  venv27 (created from ${GOVENV_ROOT}/versions/2.7.6)
+  venv33 (created from ${GOVENV_ROOT}/versions/3.3.3)
 OUT
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
+  unstub govenv-version-name
+  unstub govenv-virtualenv-prefix
 }
 
 @test "list virtual environments with hit prefix" {
-  stub pyenv-version-name ": echo venv33"
-  stub pyenv-virtualenv-prefix "2.7.6 : false"
-  stub pyenv-virtualenv-prefix "3.3.3 : false"
-  stub pyenv-virtualenv-prefix "venv27 : echo \"/usr\""
-  stub pyenv-virtualenv-prefix "venv33 : echo \"/usr\""
+  stub govenv-version-name ": echo venv33"
+  stub govenv-virtualenv-prefix "2.7.6 : false"
+  stub govenv-virtualenv-prefix "3.3.3 : false"
+  stub govenv-virtualenv-prefix "venv27 : echo \"/usr\""
+  stub govenv-virtualenv-prefix "venv33 : echo \"/usr\""
 
-  run pyenv-virtualenvs
+  run govenv-virtualenvs
 
   assert_success
   assert_output <<OUT
@@ -44,17 +44,17 @@ OUT
 * venv33 (created from /usr)
 OUT
 
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
+  unstub govenv-version-name
+  unstub govenv-virtualenv-prefix
 }
 
 @test "list virtual environments with --bare" {
-  stub pyenv-virtualenv-prefix "2.7.6 : false"
-  stub pyenv-virtualenv-prefix "3.3.3 : false"
-  stub pyenv-virtualenv-prefix "venv27 : echo \"/usr\""
-  stub pyenv-virtualenv-prefix "venv33 : echo \"/usr\""
+  stub govenv-virtualenv-prefix "2.7.6 : false"
+  stub govenv-virtualenv-prefix "3.3.3 : false"
+  stub govenv-virtualenv-prefix "venv27 : echo \"/usr\""
+  stub govenv-virtualenv-prefix "venv33 : echo \"/usr\""
 
-  run pyenv-virtualenvs --bare
+  run govenv-virtualenvs --bare
 
   assert_success
   assert_output <<OUT
@@ -62,5 +62,5 @@ venv27
 venv33
 OUT
 
-  unstub pyenv-virtualenv-prefix
+  unstub govenv-virtualenv-prefix
 }

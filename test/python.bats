@@ -3,25 +3,25 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/pyenv"
-  export PYENV_VERSION="2.7.8"
+  export GOVENV_ROOT="${TMP}/govenv"
+  export GOVENV_VERSION="2.7.8"
   setup_version "2.7.8"
   create_executable "2.7.8" "virtualenv"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-hooks "virtualenv : echo"
-  stub pyenv-rehash " : true"
-  stub pyenv-version-name "echo \${PYENV_VERSION}"
+  stub govenv-prefix "echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-prefix "echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-prefix "echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-hooks "virtualenv : echo"
+  stub govenv-rehash " : true"
+  stub govenv-version-name "echo \${GOVENV_VERSION}"
   stub curl true
 }
 
 teardown() {
   unstub curl
-  unstub pyenv-version-name
-  unstub pyenv-prefix
-  unstub pyenv-hooks
-  unstub pyenv-rehash
+  unstub govenv-version-name
+  unstub govenv-prefix
+  unstub govenv-hooks
+  unstub govenv-rehash
   teardown_version "2.7.8"
   rm -fr "$TMP"/*
 }
@@ -31,20 +31,20 @@ teardown() {
   create_executable "2.7.8" "python2.7"
   remove_executable "2.7.9" "python2.7"
 
-  stub pyenv-exec "python -m venv --help : false"
-  stub pyenv-exec "virtualenv --verbose * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "python -s -m ensurepip : true"
-  stub pyenv-which "python2.7 : echo ${PYENV_ROOT}/versions/2.7.8/bin/python2.7"
+  stub govenv-exec "python -m venv --help : false"
+  stub govenv-exec "virtualenv --verbose * : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\""
+  stub govenv-exec "python -s -m ensurepip : true"
+  stub govenv-which "python2.7 : echo ${GOVENV_ROOT}/versions/2.7.8/bin/python2.7"
 
-  run pyenv-virtualenv --verbose --python=python2.7 venv
+  run govenv-virtualenv --verbose --python=python2.7 venv
 
   assert_output <<OUT
-PYENV_VERSION=2.7.8 virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.8/bin/python2.7 ${PYENV_ROOT}/versions/2.7.8/envs/venv
+GOVENV_VERSION=2.7.8 virtualenv --verbose --python=${GOVENV_ROOT}/versions/2.7.8/bin/python2.7 ${GOVENV_ROOT}/versions/2.7.8/envs/venv
 OUT
   assert_success
 
-  unstub pyenv-which
-  unstub pyenv-exec
+  unstub govenv-which
+  unstub govenv-exec
 
   remove_executable "2.7.7" "python2.7"
   remove_executable "2.7.8" "python2.7"
@@ -56,23 +56,23 @@ OUT
   remove_executable "2.7.8" "python2.7"
   create_executable "2.7.9" "python2.7"
 
-  stub pyenv-exec "python -m venv --help : false"
-  stub pyenv-exec "virtualenv --verbose * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "python -s -m ensurepip : true"
-  stub pyenv-which "python2.7 : false"
-  stub pyenv-whence "python2.7 : echo 2.7.7; echo 2.7.8; echo 2.7.9"
-  stub pyenv-which "python2.7 : echo ${PYENV_ROOT}/versions/2.7.9/bin/python2.7"
+  stub govenv-exec "python -m venv --help : false"
+  stub govenv-exec "virtualenv --verbose * : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\""
+  stub govenv-exec "python -s -m ensurepip : true"
+  stub govenv-which "python2.7 : false"
+  stub govenv-whence "python2.7 : echo 2.7.7; echo 2.7.8; echo 2.7.9"
+  stub govenv-which "python2.7 : echo ${GOVENV_ROOT}/versions/2.7.9/bin/python2.7"
 
-  run pyenv-virtualenv --verbose --python=python2.7 venv
+  run govenv-virtualenv --verbose --python=python2.7 venv
 
   assert_output <<OUT
-PYENV_VERSION=2.7.8 virtualenv --verbose --python=${PYENV_ROOT}/versions/2.7.9/bin/python2.7 ${PYENV_ROOT}/versions/2.7.8/envs/venv
+GOVENV_VERSION=2.7.8 virtualenv --verbose --python=${GOVENV_ROOT}/versions/2.7.9/bin/python2.7 ${GOVENV_ROOT}/versions/2.7.8/envs/venv
 OUT
   assert_success
 
-  unstub pyenv-which
-  unstub pyenv-whence
-  unstub pyenv-exec
+  unstub govenv-which
+  unstub govenv-whence
+  unstub govenv-exec
 
   remove_executable "2.7.7" "python2.7"
   remove_executable "2.7.8" "python2.7"
@@ -84,19 +84,19 @@ OUT
   remove_executable "2.7.8" "python2.7"
   remove_executable "2.7.9" "python2.7"
 
-  stub pyenv-which "python2.7 : false"
-  stub pyenv-whence "python2.7 : false"
-  stub pyenv-which "python2.7 : false"
+  stub govenv-which "python2.7 : false"
+  stub govenv-whence "python2.7 : false"
+  stub govenv-which "python2.7 : false"
 
-  run pyenv-virtualenv --verbose --python=python2.7 venv
+  run govenv-virtualenv --verbose --python=python2.7 venv
 
   assert_output <<OUT
-pyenv-virtualenv: \`python2.7' is not installed in pyenv.
+govenv-virtualenv: \`python2.7' is not installed in govenv.
 OUT
   assert_failure
 
-  unstub pyenv-which
-  unstub pyenv-whence
+  unstub govenv-which
+  unstub govenv-whence
 
   remove_executable "2.7.7" "python2.7"
   remove_executable "2.7.8" "python2.7"

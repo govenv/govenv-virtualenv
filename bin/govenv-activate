@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Summary: Activate virtual environment
+#
+# Usage: govenv activate <virtualenv>
+#        govenv activate --unset
+#
+# Activate a Python virtualenv environment in current shell.
+# This acts almost as same as `govenv shell`, but this invokes the `activate`
+# script in your shell.
+#
+# <virtualenv> should be a string matching a Python version known to govenv.
+
+set -e
+[ -n "$GOVENV_DEBUG" ] && set -x
+
+# Provide govenv completions
+if [ "$1" = "--complete" ]; then
+  echo --unset
+  exec govenv-virtualenvs --bare
+fi
+
+{ printf "\x1B[31;1m"
+  echo
+  echo "Failed to activate virtualenv."
+  echo
+  echo "Perhaps govenv-virtualenv has not been loaded into your shell properly."
+  echo "Please restart current shell and try again."
+  echo
+  printf "\x1B[0m"
+} 1>&2
+exit 1

@@ -2,15 +2,15 @@
 #
 # Summary: Deactivate virtual environment
 #
-# Usage: pyenv deactivate
+# Usage: govenv deactivate
 #
 # Deactivate a Python virtual environment.
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[ -n "$GOVENV_DEBUG" ] && set -x
 
-if [ -z "${PYENV_ROOT}" ]; then
-  PYENV_ROOT="$(pyenv-root)"
+if [ -z "${GOVENV_ROOT}" ]; then
+  GOVENV_ROOT="$(govenv-root)"
 fi
 
 unset FORCE
@@ -26,7 +26,7 @@ while [ $# -gt 0 ]; do
     ;;
   "-v" | "--verbose" )
     unset QUIET
-    PYENV_VIRTUALENV_VERBOSE_ACTIVATE=1
+    GOVENV_VIRTUALENV_VERBOSE_ACTIVATE=1
     ;;
   * )
     break
@@ -38,24 +38,24 @@ done
 if [ -z "${VIRTUAL_ENV}" ]; then
   if [ -z "${FORCE}" ]; then
     if [ -z "${QUIET}" ]; then
-      echo "pyenv-virtualenv: no virtualenv has been activated." 1>&2
+      echo "govenv-virtualenv: no virtualenv has been activated." 1>&2
     fi
     echo "false"
     exit 1
   fi
 fi
 
-shell="$(basename "${PYENV_SHELL:-$SHELL}")"
+shell="$(basename "${GOVENV_SHELL:-$SHELL}")"
 prefix="${VIRTUAL_ENV}"
 
-if [[ "${prefix%/*/envs/*}" == "${PYENV_ROOT}/versions" ]]; then
-  venv="${prefix#${PYENV_ROOT}/versions/}"
+if [[ "${prefix%/*/envs/*}" == "${GOVENV_ROOT}/versions" ]]; then
+  venv="${prefix#${GOVENV_ROOT}/versions/}"
 else
   venv="${prefix##*/}"
 fi
 
-if [ -n "$PYENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
-  echo "pyenv-virtualenv: deactivate ${venv}" 1>&2
+if [ -n "$GOVENV_VIRTUALENV_VERBOSE_ACTIVATE" ]; then
+  echo "govenv-virtualenv: deactivate ${venv}" 1>&2
 fi
 
 # conda package anaconda/miniconda scripts (#173)
@@ -75,20 +75,20 @@ if [ -x "${prefix}/bin/conda" ]; then
   shopt -u nullglob
 fi
 
-if [ -n "${PYENV_ACTIVATE_SHELL}" ]; then
-  # shell version set in pyenv-sh-activate should be unset
-  # https://github.com/yyuu/pyenv-virtualenv/issues/61
+if [ -n "${GOVENV_ACTIVATE_SHELL}" ]; then
+  # shell version set in govenv-sh-activate should be unset
+  # https://github.com/yyuu/govenv-virtualenv/issues/61
   case "$shell" in
   fish )
     cat <<EOS
-set -e PYENV_VERSION;
-set -e PYENV_ACTIVATE_SHELL;
+set -e GOVENV_VERSION;
+set -e GOVENV_ACTIVATE_SHELL;
 EOS
     ;;
   * )
     cat <<EOS
-unset PYENV_VERSION;
-unset PYENV_ACTIVATE_SHELL;
+unset GOVENV_VERSION;
+unset GOVENV_ACTIVATE_SHELL;
 EOS
     ;;
   esac
@@ -98,13 +98,13 @@ fi
 case "${shell}" in
 fish )
   cat <<EOS
-set -e PYENV_VIRTUAL_ENV;
+set -e GOVENV_VIRTUAL_ENV;
 set -e VIRTUAL_ENV;
 EOS
   ;;
 * )
   cat <<EOS
-unset PYENV_VIRTUAL_ENV;
+unset GOVENV_VIRTUAL_ENV;
 unset VIRTUAL_ENV;
 EOS
   ;;

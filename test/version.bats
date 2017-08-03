@@ -3,35 +3,35 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/pyenv"
+  export GOVENV_ROOT="${TMP}/govenv"
 }
 
 @test "display virtualenv version" {
   setup_virtualenv "2.7.7"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/2.7.7'"
-  stub pyenv-exec "python -m venv --help : false"
-  stub pyenv-exec "virtualenv --version : echo \"1.11\""
+  stub govenv-prefix "echo '${GOVENV_ROOT}/versions/2.7.7'"
+  stub govenv-exec "python -m venv --help : false"
+  stub govenv-exec "virtualenv --version : echo \"1.11\""
 
-  run pyenv-virtualenv --version
+  run govenv-virtualenv --version
 
   assert_success
-  [[ "$output" == "pyenv-virtualenv "?.?.?" (virtualenv 1.11)" ]]
+  [[ "$output" == "govenv-virtualenv "?.?.?" (virtualenv 1.11)" ]]
 
-  unstub pyenv-prefix
-  unstub pyenv-exec
+  unstub govenv-prefix
+  unstub govenv-exec
   teardown_virtualenv "2.7.7"
 }
 
 @test "display venv version" {
   setup_m_venv "3.4.1"
-  stub pyenv-prefix "echo '${PYENV_ROOT}/versions/3.4.1'"
-  stub pyenv-exec "python -m venv --help : true"
+  stub govenv-prefix "echo '${GOVENV_ROOT}/versions/3.4.1'"
+  stub govenv-exec "python -m venv --help : true"
 
-  run pyenv-virtualenv --version
+  run govenv-virtualenv --version
 
   assert_success
-  [[ "$output" == "pyenv-virtualenv "?.?.?" (python -m venv)" ]]
+  [[ "$output" == "govenv-virtualenv "?.?.?" (python -m venv)" ]]
 
-  unstub pyenv-prefix
+  unstub govenv-prefix
   teardown_m_venv "3.4.1"
 }

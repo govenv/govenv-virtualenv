@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 #
-# Summary: List all Python virtualenvs found in `$PYENV_ROOT/versions/*'.
-# Usage: pyenv virtualenvs [--bare] [--skip-aliases]
+# Summary: List all Python virtualenvs found in `$GOVENV_ROOT/versions/*'.
+# Usage: govenv virtualenvs [--bare] [--skip-aliases]
 #
-# List all virtualenvs found in `$PYENV_ROOT/versions/*' and its `$PYENV_ROOT/versions/envs/*'.
+# List all virtualenvs found in `$GOVENV_ROOT/versions/*' and its `$GOVENV_ROOT/versions/envs/*'.
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[ -n "$GOVENV_DEBUG" ] && set -x
 
-if [ -z "$PYENV_ROOT" ]; then
-  PYENV_ROOT="${HOME}/.pyenv"
+if [ -z "$GOVENV_ROOT" ]; then
+  GOVENV_ROOT="${HOME}/.govenv"
 fi
 
 unset bare
 unset skip_aliases
-# Provide pyenv completions
+# Provide govenv completions
 for arg; do
   case "$arg" in
   --complete )
@@ -24,23 +24,23 @@ for arg; do
   --bare ) bare=1 ;;
   --skip-aliases ) skip_aliases=1 ;;
   * )
-    pyenv-help --usage virtualenvs >&2
+    govenv-help --usage virtualenvs >&2
     exit 1
     ;;
   esac
 done
 
-versions_dir="${PYENV_ROOT}/versions"
+versions_dir="${GOVENV_ROOT}/versions"
 
-if ! enable -f "${BASH_SOURCE%/*}"/../libexec/pyenv-realpath.dylib realpath 2>/dev/null; then
-  if [ -n "$PYENV_NATIVE_EXT" ]; then
-    echo "pyenv: failed to load \`realpath' builtin" >&2
+if ! enable -f "${BASH_SOURCE%/*}"/../libexec/govenv-realpath.dylib realpath 2>/dev/null; then
+  if [ -n "$GOVENV_NATIVE_EXT" ]; then
+    echo "govenv: failed to load \`realpath' builtin" >&2
     exit 1
   fi
 
   READLINK=$(type -p greadlink readlink | head -1)
   if [ -z "$READLINK" ]; then
-    echo "pyenv: cannot find readlink - are you missing GNU coreutils?" >&2
+    echo "govenv: cannot find readlink - are you missing GNU coreutils?" >&2
     exit 1
   fi
 
@@ -78,7 +78,7 @@ else
   hit_prefix="* "
   miss_prefix="  "
   OLDIFS="$IFS"
-  IFS=: current_versions=($(pyenv-version-name || true))
+  IFS=: current_versions=($(govenv-version-name || true))
   IFS="$OLDIFS"
   print_origin="1"
   include_system=""
@@ -114,13 +114,13 @@ for path in "$versions_dir"/*; do
       target="$(realpath "$path")"
       [ "${target%/*/envs/*}" != "$versions_dir" ] || continue
     fi
-    virtualenv_prefix="$(pyenv-virtualenv-prefix "${path##*/}" 2>/dev/null || true)"
+    virtualenv_prefix="$(govenv-virtualenv-prefix "${path##*/}" 2>/dev/null || true)"
     if [ -d "${virtualenv_prefix}" ]; then
       print_version "${path##*/}" " (created from ${virtualenv_prefix})"
     fi
     for venv_path in "${path}/envs/"*; do
       venv="${path##*/}/envs/${venv_path##*/}"
-      virtualenv_prefix="$(pyenv-virtualenv-prefix "${venv}" 2>/dev/null || true)"
+      virtualenv_prefix="$(govenv-virtualenv-prefix "${venv}" 2>/dev/null || true)"
       if [ -d "${virtualenv_prefix}" ]; then
         print_version "${venv}" " (created from ${virtualenv_prefix})"
       fi

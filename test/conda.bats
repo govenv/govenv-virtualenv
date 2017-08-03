@@ -3,88 +3,88 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/pyenv"
+  export GOVENV_ROOT="${TMP}/govenv"
 }
 
-stub_pyenv() {
-  stub pyenv-version-name "echo \${PYENV_VERSION}"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-hooks "virtualenv : echo"
-  stub pyenv-rehash " : echo rehashed"
+stub_govenv() {
+  stub govenv-version-name "echo \${GOVENV_VERSION}"
+  stub govenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-hooks "virtualenv : echo"
+  stub govenv-rehash " : echo rehashed"
 }
 
-unstub_pyenv() {
-  unstub pyenv-version-name
-  unstub pyenv-prefix
-  unstub pyenv-hooks
-  unstub pyenv-rehash
+unstub_govenv() {
+  unstub govenv-version-name
+  unstub govenv-prefix
+  unstub govenv-hooks
+  unstub govenv-rehash
 }
 
 @test "create virtualenv by conda create" {
-  export PYENV_VERSION="miniconda3-3.16.0"
-  setup_conda "${PYENV_VERSION}"
-  stub_pyenv "${PYENV_VERSION}"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "python -s -m ensurepip : true"
+  export GOVENV_VERSION="miniconda3-3.16.0"
+  setup_conda "${GOVENV_VERSION}"
+  stub_govenv "${GOVENV_VERSION}"
+  stub govenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-virtualenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-exec "conda * : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\""
+  stub govenv-exec "python -s -m ensurepip : true"
 
-  run pyenv-virtualenv venv
+  run govenv-virtualenv venv
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python
+GOVENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python
 rehashed
 OUT
 
-  unstub_pyenv
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-exec
+  unstub_govenv
+  unstub govenv-virtualenv-prefix
+  unstub govenv-exec
   teardown_m_venv "miniconda3-3.16.0"
 }
 
 @test "create virtualenv by conda create with -p" {
-  export PYENV_VERSION="miniconda3-3.16.0"
-  setup_conda "${PYENV_VERSION}"
-  stub_pyenv "${PYENV_VERSION}"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "python -s -m ensurepip : true"
+  export GOVENV_VERSION="miniconda3-3.16.0"
+  setup_conda "${GOVENV_VERSION}"
+  stub_govenv "${GOVENV_VERSION}"
+  stub govenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-virtualenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-exec "conda * : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\""
+  stub govenv-exec "python -s -m ensurepip : true"
 
-  run pyenv-virtualenv -p python3.5 venv
+  run govenv-virtualenv -p python3.5 venv
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5 python
+GOVENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5 python
 rehashed
 OUT
 
-  unstub_pyenv
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-exec
+  unstub_govenv
+  unstub govenv-virtualenv-prefix
+  unstub govenv-exec
   teardown_m_venv "miniconda3-3.16.0"
 }
 
 @test "create virtualenv by conda create with --python" {
-  export PYENV_VERSION="miniconda3-3.16.0"
-  setup_conda "${PYENV_VERSION}"
-  stub_pyenv "${PYENV_VERSION}"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-virtualenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-exec "conda * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\""
-  stub pyenv-exec "python -s -m ensurepip : true"
+  export GOVENV_VERSION="miniconda3-3.16.0"
+  setup_conda "${GOVENV_VERSION}"
+  stub_govenv "${GOVENV_VERSION}"
+  stub govenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-virtualenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-exec "conda * : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\""
+  stub govenv-exec "python -s -m ensurepip : true"
 
-  run pyenv-virtualenv --python=python3.5 venv
+  run govenv-virtualenv --python=python3.5 venv
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5 python
+GOVENV_VERSION=miniconda3-3.16.0 conda create --name venv --yes python=3.5 python
 rehashed
 OUT
 
-  unstub_pyenv
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-exec
+  unstub_govenv
+  unstub govenv-virtualenv-prefix
+  unstub govenv-exec
   teardown_m_venv "miniconda3-3.16.0"
 }

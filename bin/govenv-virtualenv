@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 #
-# Summary: Create a Python virtualenv using the pyenv-virtualenv plugin
+# Summary: Create a Python virtualenv using the govenv-virtualenv plugin
 #
-# Usage: pyenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] [version] <virtualenv-name>
-#        pyenv virtualenv --version
-#        pyenv virtualenv --help
+# Usage: govenv virtualenv [-f|--force] [VIRTUALENV_OPTIONS] [version] <virtualenv-name>
+#        govenv virtualenv --version
+#        govenv virtualenv --help
 #
 #   -f/--force       Install even if the version appears to be installed already
 #
 
-PYENV_VIRTUALENV_VERSION="1.1.0"
+GOVENV_VIRTUALENV_VERSION="1.1.0"
 
 set -e
-[ -n "$PYENV_DEBUG" ] && set -x
+[ -n "$GOVENV_DEBUG" ] && set -x
 
-if [ -z "${PYENV_ROOT}" ]; then
-  PYENV_ROOT="$(pyenv-root)"
+if [ -z "${GOVENV_ROOT}" ]; then
+  GOVENV_ROOT="$(govenv-root)"
 fi
 
-# Provide pyenv completions
+# Provide govenv completions
 if [ "$1" = "--complete" ]; then
-  exec pyenv-versions --bare
+  exec govenv-versions --bare
 fi
 
 unset PIP_REQUIRE_VENV
@@ -104,44 +104,44 @@ version() {
   detect_venv
   local version
   if [ -n "${USE_CONDA}" ]; then
-    version="$(pyenv-exec conda --version 2>/dev/null || true)"
-    echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
+    version="$(govenv-exec conda --version 2>/dev/null || true)"
+    echo "govenv-virtualenv ${GOVENV_VIRTUALENV_VERSION} (conda ${version:-unknown})"
   else
     if [ -n "$USE_M_VENV" ]; then
-      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (python -m venv)"
+      echo "govenv-virtualenv ${GOVENV_VIRTUALENV_VERSION} (python -m venv)"
     else
-      version="$(pyenv-exec virtualenv --version 2>/dev/null || true)"
-      echo "pyenv-virtualenv ${PYENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
+      version="$(govenv-exec virtualenv --version 2>/dev/null || true)"
+      echo "govenv-virtualenv ${GOVENV_VIRTUALENV_VERSION} (virtualenv ${version:-unknown})"
     fi
   fi
 }
 
 usage() {
-  # We can remove the sed fallback once pyenv 0.2.0 is widely available.
-  pyenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
+  # We can remove the sed fallback once govenv 0.2.0 is widely available.
+  govenv-help virtualenv 2>/dev/null || sed -ne '/^#/!q;s/.//;s/.//;1,4d;p' < "$0"
   if [ -n "${USE_CONDA}" ]; then
-    pyenv-exec conda create --help 2>/dev/null || true
+    govenv-exec conda create --help 2>/dev/null || true
   else
     if [ -n "${USE_M_VENV}" ]; then
-      pyenv-exec python -m venv --help 2>/dev/null || true
+      govenv-exec python -m venv --help 2>/dev/null || true
     else
-      pyenv-exec virtualenv --help 2>/dev/null || true
+      govenv-exec virtualenv --help 2>/dev/null || true
     fi
   fi
   [ -z "$1" ] || exit "$1"
 }
 
 detect_venv() {
-  # Check the existence of executables as a workaround for the issue with pyenv-which-ext
-  # https://github.com/yyuu/pyenv-virtualenv/issues/26
-  local prefix="$(pyenv-prefix)"
+  # Check the existence of executables as a workaround for the issue with govenv-which-ext
+  # https://github.com/yyuu/govenv-virtualenv/issues/26
+  local prefix="$(govenv-prefix)"
   if [ -x "${prefix}/bin/conda" ]; then
     HAS_CONDA=1
   else
     if [ -x "${prefix}/bin/virtualenv" ]; then
       HAS_VIRTUALENV=1
     fi
-    if pyenv-exec python -m venv --help 1>/dev/null 2>&1; then
+    if govenv-exec python -m venv --help 1>/dev/null 2>&1; then
       HAS_M_VENV=1
     fi
   fi
@@ -156,7 +156,7 @@ detect_venv() {
 }
 
 build_package_ez_setup() {
-  local ez_setup="${PYENV_VIRTUALENV_CACHE_PATH}/ez_setup.py"
+  local ez_setup="${GOVENV_VIRTUALENV_CACHE_PATH}/ez_setup.py"
   rm -f "${ez_setup}"
   { if [ "${EZ_SETUP+defined}" ] && [ -f "${EZ_SETUP}" ]; then
       echo "Installing setuptools from ${EZ_SETUP}..." 1>&2
@@ -167,14 +167,14 @@ build_package_ez_setup() {
       http get "${EZ_SETUP_URL}"
     fi
   } 1> "${ez_setup}"
-  pyenv-exec python -s "${ez_setup}" ${EZ_SETUP_OPTS} 1>&2 || {
+  govenv-exec python -s "${ez_setup}" ${EZ_SETUP_OPTS} 1>&2 || {
     echo "error: failed to install setuptools via ez_setup.py" >&2
     return 1
   }
 }
 
 build_package_get_pip() {
-  local get_pip="${PYENV_VIRTUALENV_CACHE_PATH}/get-pip.py"
+  local get_pip="${GOVENV_VIRTUALENV_CACHE_PATH}/get-pip.py"
   rm -f "${get_pip}"
   { if [ "${GET_PIP+defined}" ] && [ -f "${GET_PIP}" ]; then
       echo "Installing pip from ${GET_PIP}..." 1>&2
@@ -185,25 +185,25 @@ build_package_get_pip() {
       http get "${GET_PIP_URL}"
     fi
   } 1> "${get_pip}"
-  pyenv-exec python -s "${get_pip}" ${GET_PIP_OPTS} 1>&2 || {
+  govenv-exec python -s "${get_pip}" ${GET_PIP_OPTS} 1>&2 || {
     echo "error: failed to install pip via get-pip.py" >&2
     return 1
   }
 }
 
 build_package_ensurepip() {
-  pyenv-exec python -s -m ensurepip 2>/dev/null || build_package_get_pip "$@" || return 1
+  govenv-exec python -s -m ensurepip 2>/dev/null || build_package_get_pip "$@" || return 1
 }
 
 prepare_requirements() {
-  pyenv-exec pip freeze > "${REQUIREMENTS}"
+  govenv-exec pip freeze > "${REQUIREMENTS}"
   mv -f "${VIRTUALENV_PATH}" "${VIRTUALENV_ORIG}"
 }
 
 install_requirements() {
   if [ -f "${REQUIREMENTS}" ]; then
     ## Migrate previously installed packages from requirements.txt
-    pyenv-exec pip install $QUIET $VERBOSE --requirement "${REQUIREMENTS}" || {
+    govenv-exec pip install $QUIET $VERBOSE --requirement "${REQUIREMENTS}" || {
       echo
       echo "PIP INSTALL FAILED"
       echo
@@ -218,9 +218,9 @@ install_requirements() {
   fi
 }
 
-PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
-if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
-  PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
+GOVENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
+if [ -z "${GOVENV_VIRTUALENV_CACHE_PATH}" ]; then
+  GOVENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${GOVENV_ROOT}/cache}"
 fi
 VIRTUALENV_OPTIONS=()
 
@@ -280,13 +280,13 @@ for option in "${OPTIONS[@]}"; do
 done
 
 if [[ "${#ARGUMENTS[@]}" == 0 ]]; then
-  echo "pyenv-virtualenv: no virtualenv name given." 1>&2
+  echo "govenv-virtualenv: no virtualenv name given." 1>&2
   exit 1
 elif [[ "${#ARGUMENTS[@]}" == 1 ]]; then
   # If only one argument given, use current version as source version
   OLDIFS="${IFS}"
   IFS=:
-  VERSION_NAMES=($(pyenv-version-name))
+  VERSION_NAMES=($(govenv-version-name))
   IFS="${OLDIFS}"
   VERSION_NAME="${VERSION_NAMES}"
   VIRTUALENV_NAME="${ARGUMENTS[0]}"
@@ -301,27 +301,27 @@ if [ -z "${VERSION_NAME}" ] || [ -z "${VIRTUALENV_NAME}" ]; then
 fi
 
 if [[ "${VIRTUALENV_NAME##*/}" == "system" ]]; then
-  echo "pyenv-virtualenv: \`system' is not allowed as virtualenv name." 1>&2
+  echo "govenv-virtualenv: \`system' is not allowed as virtualenv name." 1>&2
   exit 1
 fi
 
 if [ "$VIRTUALENV_NAME" != "${VIRTUALENV_NAME%[[:space:]]*}" ]; then
-  echo "pyenv-virtualenv: no whitespace allowed in virtualenv name." 1>&2
+  echo "govenv-virtualenv: no whitespace allowed in virtualenv name." 1>&2
   exit 1
 fi
 
 if [ "${VIRTUALENV_NAME}" != "${VIRTUALENV_NAME%/*}" ] && [[ "${VIRTUALENV_NAME}" != "${VERSION_NAME%%/*}/envs/${VIRTUALENV_NAME##*/}" ]] ; then
-  echo "pyenv-virtualenv: no slash allowed in virtualenv name." 1>&2
+  echo "govenv-virtualenv: no slash allowed in virtualenv name." 1>&2
   exit 1
 fi
 
 # Set VERSION_NAME as default version in this script
-export PYENV_VERSION="${VERSION_NAME}"
+export GOVENV_VERSION="${VERSION_NAME}"
 
 # Source version must exist before creating virtualenv.
-PREFIX="$(pyenv-prefix 2>/dev/null || true)"
+PREFIX="$(govenv-prefix 2>/dev/null || true)"
 if [ ! -d "${PREFIX}" ]; then
-  echo "pyenv-virtualenv: \`${PYENV_VERSION}' is not installed in pyenv." 1>&2
+  echo "govenv-virtualenv: \`${GOVENV_VERSION}' is not installed in govenv." 1>&2
   exit 1
 fi
 
@@ -335,22 +335,22 @@ fi
 if [[ "${VERSION_NAME%/envs/*}" == "system" ]]; then
   VIRTUALENV_NAME="${VIRTUALENV_NAME##*/}"
 else
-  VIRTUALENV_PREFIX="$(pyenv-virtualenv-prefix 2>/dev/null || true)"
-  if [[ "${VIRTUALENV_PREFIX%/*}" == "${PYENV_ROOT}/versions" ]]; then
-    VIRTUALENV_NAME="${VIRTUALENV_PREFIX#${PYENV_ROOT}/versions/}/envs/${VIRTUALENV_NAME##*/}"
+  VIRTUALENV_PREFIX="$(govenv-virtualenv-prefix 2>/dev/null || true)"
+  if [[ "${VIRTUALENV_PREFIX%/*}" == "${GOVENV_ROOT}/versions" ]]; then
+    VIRTUALENV_NAME="${VIRTUALENV_PREFIX#${GOVENV_ROOT}/versions/}/envs/${VIRTUALENV_NAME##*/}"
   else
     VIRTUALENV_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME##*/}"
   fi
 fi
 
-VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
-if [[ "${VIRTUALENV_PATH/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
-  COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
+VIRTUALENV_PATH="${GOVENV_ROOT}/versions/${VIRTUALENV_NAME}"
+if [[ "${VIRTUALENV_PATH/*/envs/*}" != "${GOVENV_ROOT}/versions" ]]; then
+  COMPAT_VIRTUALENV_PATH="${GOVENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
 fi
 
 if [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
   if [ -e "${COMPAT_VIRTUALENV_PATH}" ] || [ -L "${COMPAT_VIRTUALENV_PATH}" ]; then
-    echo "pyenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
+    echo "govenv-virtualenv: \`${COMPAT_VIRTUALENV_PATH}' already exists." 1>&2
     exit 1
   fi
 fi
@@ -376,7 +376,7 @@ if [ -n "$UPGRADE" ]; then
 fi
 
 if [ -z "${VIRTUALENV_VERSION}" ]; then
-  case "${PYENV_VERSION}" in
+  case "${GOVENV_VERSION}" in
   "3.0"* )
     NO_ENSUREPIP=1
     ;;
@@ -385,7 +385,7 @@ if [ -z "${VIRTUALENV_VERSION}" ]; then
     ;;
   "3.2"* | "stackless-3.2"* )
     # pip 8.x (bundled with virtualenv 14+) doesn't support 3.2 anymore
-    # https://github.com/yyuu/pyenv/issues/531
+    # https://github.com/yyuu/govenv/issues/531
     VIRTUALENV_VERSION="13.1.2"
     NO_ENSUREPIP=1
     ;;
@@ -407,21 +407,21 @@ else
     unset QUIET
     unset VERBOSE
     if [ -n "${VIRTUALENV_PYTHON}" ]; then
-      echo "pyenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by \`python -m venv'." 1>&2
+      echo "govenv-virtualenv: \`--python=${VIRTUALENV_PYTHON}' is not supported by \`python -m venv'." 1>&2
       exit 1
     fi
   else
     if [ -n "${VIRTUALENV_PYTHON}" ]; then
-      if [[ "${VIRTUALENV_PYTHON}" == "${VIRTUALENV_PYTHON##*/}" ]] || [[ "${VIRTUALENV_PYTHON}" == "${PYENV_ROOT}/shims/"* ]]; then
-        python="$(pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+      if [[ "${VIRTUALENV_PYTHON}" == "${VIRTUALENV_PYTHON##*/}" ]] || [[ "${VIRTUALENV_PYTHON}" == "${GOVENV_ROOT}/shims/"* ]]; then
+        python="$(govenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
         if [ -x "${python}" ]; then
           VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
         else
-          python="$(PYENV_VERSION="$(pyenv-whence "${VIRTUALENV_PYTHON##*/}" 2>/dev/null | tail -n 1 || true)" pyenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
+          python="$(GOVENV_VERSION="$(govenv-whence "${VIRTUALENV_PYTHON##*/}" 2>/dev/null | tail -n 1 || true)" govenv-which "${VIRTUALENV_PYTHON##*/}" 2>/dev/null || true)"
           if [ -x "${python}" ]; then
             VIRTUALENV_OPTIONS[${#VIRTUALENV_OPTIONS[*]}]="--python=${python}"
           else
-            echo "pyenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in pyenv." 1>&2
+            echo "govenv-virtualenv: \`${VIRTUALENV_PYTHON##*/}' is not installed in govenv." 1>&2
             exit 1
           fi
         fi
@@ -435,7 +435,7 @@ else
       else
         virtualenv_spec="virtualenv"
       fi
-      pyenv-exec pip install $QUIET $VERBOSE "${virtualenv_spec}"
+      govenv-exec pip install $QUIET $VERBOSE "${virtualenv_spec}"
       HAS_VIRTUALENV=1
     fi
   fi
@@ -472,7 +472,7 @@ after_virtualenv() {
 
 # Load plugin hooks.
 OLDIFS="$IFS"
-IFS=$'\n' scripts=(`pyenv-hooks virtualenv`)
+IFS=$'\n' scripts=(`govenv-hooks virtualenv`)
 IFS="$OLDIFS"
 for script in "${scripts[@]}"; do source "$script"; done
 
@@ -483,7 +483,7 @@ for script in "${scripts[@]}"; do source "$script"; done
 # the --force option was specified.
 if [ -d "${VIRTUALENV_PATH}/bin" ]; then
   if [ -z "$FORCE" ]; then
-    echo "pyenv-virtualenv: ${VIRTUALENV_PATH} already exists" 1>&2
+    echo "govenv-virtualenv: ${VIRTUALENV_PATH} already exists" 1>&2
     read -p "continue with installation? (y/N) "
 
     case "$REPLY" in
@@ -494,10 +494,10 @@ if [ -d "${VIRTUALENV_PATH}/bin" ]; then
 
   if [ -n "$UPGRADE" ]; then
     if [ -n "${NO_ENSUREPIP}" ]; then
-      echo "pyenv-virtualenv: upgrading will not work with --no-setuptools or --no-pip" 1>&2
+      echo "govenv-virtualenv: upgrading will not work with --no-setuptools or --no-pip" 1>&2
       exit 1
     else
-      PYENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
+      GOVENV_VERSION="${VIRTUALENV_NAME}" prepare_requirements
     fi
   fi
 fi
@@ -516,15 +516,15 @@ trap cleanup SIGINT
 STATUS=0
 # virtualenv may download distribute/setuptools into the current directory.
 # Change to cache directory to reuse them between invocations.
-mkdir -p "${PYENV_VIRTUALENV_CACHE_PATH}"
-cd "${PYENV_VIRTUALENV_CACHE_PATH}"
+mkdir -p "${GOVENV_VIRTUALENV_CACHE_PATH}"
+cd "${GOVENV_VIRTUALENV_CACHE_PATH}"
 if [ -n "${USE_CONDA}" ]; then
-  pyenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
+  govenv-exec conda create $QUIET $VERBOSE --name "${VIRTUALENV_PATH##*/}" --yes "${VIRTUALENV_OPTIONS[@]}" python || STATUS="$?"
 else
   if [ -n "${USE_M_VENV}" ]; then
-    pyenv-exec python -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+    govenv-exec python -m venv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   else
-    pyenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
+    govenv-exec virtualenv $QUIET $VERBOSE "${VIRTUALENV_OPTIONS[@]}" "${VIRTUALENV_PATH}" || STATUS="$?"
   fi
 fi
 
@@ -535,18 +535,18 @@ fi
 
 if [ -z "${NO_ENSUREPIP}" ]; then
   ## Install setuptools and pip.
-  PYENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
+  GOVENV_VERSION="${VIRTUALENV_NAME}" build_package_ensurepip
 
   ## Migrate previously installed packages from requirements.txt.
-  PYENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
+  GOVENV_VERSION="${VIRTUALENV_NAME}" install_requirements || true
 fi
 
 # Execute `after_virtualenv` hooks.
 for hook in "${after_hooks[@]}"; do eval "$hook"; done
 
-# Run `pyenv-rehash` after a successful installation.
+# Run `govenv-rehash` after a successful installation.
 if [ "$STATUS" == "0" ]; then
-  pyenv-rehash
+  govenv-rehash
 else
   cleanup
 fi

@@ -1,7 +1,7 @@
 virtualenv_list_executable_names() {
   local file
   shopt -s nullglob
-  for file in "$PYENV_ROOT"/versions/*/envs/*/bin/*; do
+  for file in "$GOVENV_ROOT"/versions/*/envs/*/bin/*; do
     echo "${file##*/}"
   done
   shopt -u nullglob

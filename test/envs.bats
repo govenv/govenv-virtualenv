@@ -3,45 +3,45 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/envs/pyenv"
+  export GOVENV_ROOT="${TMP}/envs/govenv"
 }
 
-stub_pyenv() {
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-hooks "virtualenv : echo"
-  stub pyenv-rehash " : echo rehashed"
+stub_govenv() {
+  stub govenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-hooks "virtualenv : echo"
+  stub govenv-rehash " : echo rehashed"
 }
 
-unstub_pyenv() {
-  unstub pyenv-prefix
-  unstub pyenv-hooks
-  unstub pyenv-rehash
+unstub_govenv() {
+  unstub govenv-prefix
+  unstub govenv-hooks
+  unstub govenv-rehash
 }
 
-@test "path should be handled properly even if there is 'envs' in PYENV_ROOT" {
-  export PYENV_VERSION="3.5.1"
+@test "path should be handled properly even if there is 'envs' in GOVENV_ROOT" {
+  export GOVENV_VERSION="3.5.1"
   setup_m_venv "3.5.1"
-  stub_pyenv "${PYENV_VERSION}"
-  stub pyenv-version-name "echo '${PYENV_VERSION}'"
-  stub pyenv-prefix " : echo '${PYENV_ROOT}/versions/${PYENV_VERSION}'"
-  stub pyenv-virtualenv-prefix " : false"
-  stub pyenv-exec "python -m venv --help : true"
-  stub pyenv-exec "python -m venv * : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";mkdir -p \${PYENV_ROOT}/versions/3.5.1/envs/venv/bin"
-  stub pyenv-exec "python -s -m ensurepip : echo PYENV_VERSION=\${PYENV_VERSION} \"\$@\";touch \${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pip"
+  stub_govenv "${GOVENV_VERSION}"
+  stub govenv-version-name "echo '${GOVENV_VERSION}'"
+  stub govenv-prefix " : echo '${GOVENV_ROOT}/versions/${GOVENV_VERSION}'"
+  stub govenv-virtualenv-prefix " : false"
+  stub govenv-exec "python -m venv --help : true"
+  stub govenv-exec "python -m venv * : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\";mkdir -p \${GOVENV_ROOT}/versions/3.5.1/envs/venv/bin"
+  stub govenv-exec "python -s -m ensurepip : echo GOVENV_VERSION=\${GOVENV_VERSION} \"\$@\";touch \${GOVENV_ROOT}/versions/3.5.1/envs/venv/bin/pip"
 
-  run pyenv-virtualenv venv
+  run govenv-virtualenv venv
 
   assert_success
   assert_output <<OUT
-PYENV_VERSION=3.5.1 python -m venv ${PYENV_ROOT}/versions/3.5.1/envs/venv
-PYENV_VERSION=3.5.1/envs/venv python -s -m ensurepip
+GOVENV_VERSION=3.5.1 python -m venv ${GOVENV_ROOT}/versions/3.5.1/envs/venv
+GOVENV_VERSION=3.5.1/envs/venv python -s -m ensurepip
 rehashed
 OUT
-  assert [ -e "${PYENV_ROOT}/versions/3.5.1/envs/venv/bin/pip" ]
+  assert [ -e "${GOVENV_ROOT}/versions/3.5.1/envs/venv/bin/pip" ]
 
-  unstub_pyenv
-  unstub pyenv-version-name
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-exec
+  unstub_govenv
+  unstub govenv-version-name
+  unstub govenv-virtualenv-prefix
+  unstub govenv-exec
   teardown_m_venv "3.5.1"
 }

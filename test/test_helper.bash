@@ -108,13 +108,13 @@ assert_output_contains_not() {
 }
 
 create_executable() {
-  mkdir -p "${PYENV_ROOT}/versions/$1/bin"
-  touch "${PYENV_ROOT}/versions/$1/bin/$2"
-  chmod +x "${PYENV_ROOT}/versions/$1/bin/$2"
+  mkdir -p "${GOVENV_ROOT}/versions/$1/bin"
+  touch "${GOVENV_ROOT}/versions/$1/bin/$2"
+  chmod +x "${GOVENV_ROOT}/versions/$1/bin/$2"
 }
 
 remove_executable() {
-  rm -f "${PYENV_ROOT}/versions/$1/bin/$2"
+  rm -f "${GOVENV_ROOT}/versions/$1/bin/$2"
 }
 
 setup_version() {
@@ -124,7 +124,7 @@ setup_version() {
 }
 
 teardown_version() {
-  rm -fr "${PYENV_ROOT}/versions/$1"
+  rm -fr "${GOVENV_ROOT}/versions/$1"
 }
 
 setup_virtualenv() {
@@ -134,7 +134,7 @@ setup_virtualenv() {
 }
 
 teardown_virtualenv() {
-  rm -fr "${PYENV_ROOT}/versions/$1"
+  rm -fr "${GOVENV_ROOT}/versions/$1"
 }
 
 setup_m_venv() {
@@ -144,7 +144,7 @@ setup_m_venv() {
 }
 
 teardown_m_venv() {
-  rm -fr "${PYENV_ROOT}/versions/$1"
+  rm -fr "${GOVENV_ROOT}/versions/$1"
 }
 
 setup_conda() {
@@ -158,13 +158,13 @@ setup_conda() {
     create_executable "${conda}/envs/${env}" "python"
     create_executable "${conda}/envs/${env}" "activate"
     create_executable "${conda}/envs/${env}" "conda"
-    mkdir -p "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d"
-    touch "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d/activate.sh"
-    mkdir -p "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/deactivate.d"
-    touch "${PYENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/deactivate.d/deactivate.sh"
+    mkdir -p "${GOVENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d"
+    touch "${GOVENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/activate.d/activate.sh"
+    mkdir -p "${GOVENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/deactivate.d"
+    touch "${GOVENV_ROOT}/versions/${conda}/envs/${env}/etc/conda/deactivate.d/deactivate.sh"
   done
 }
 
 teardown_conda() {
-  rm -fr "${PYENV_ROOT}/versions/$1"
+  rm -fr "${GOVENV_ROOT}/versions/$1"
 }

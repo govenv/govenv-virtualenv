@@ -3,86 +3,86 @@
 load test_helper
 
 setup() {
-  export PYENV_ROOT="${TMP}/pyenv"
+  export GOVENV_ROOT="${TMP}/govenv"
 }
 
 @test "delete virtualenv" {
-  mkdir -p "${PYENV_ROOT}/versions/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/venv27"
 
-  stub pyenv-virtualenv-prefix "venv27 : true"
-  stub pyenv-rehash "true"
+  stub govenv-virtualenv-prefix "venv27 : true"
+  stub govenv-rehash "true"
 
-  run pyenv-virtualenv-delete -f "venv27"
+  run govenv-virtualenv-delete -f "venv27"
 
   assert_success
 
-  unstub pyenv-virtualenv-prefix
-  unstub pyenv-rehash
+  unstub govenv-virtualenv-prefix
+  unstub govenv-rehash
 
-  [ ! -d "${PYENV_ROOT}/versions/venv27" ]
+  [ ! -d "${GOVENV_ROOT}/versions/venv27" ]
 }
 
 @test "delete virtualenv by symlink" {
-  mkdir -p "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
-  ln -fs "${PYENV_ROOT}/versions/2.7.11/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/2.7.11/envs/venv27"
+  ln -fs "${GOVENV_ROOT}/versions/2.7.11/envs/venv27" "${GOVENV_ROOT}/versions/venv27"
 
-  stub pyenv-rehash "true"
+  stub govenv-rehash "true"
 
-  run pyenv-virtualenv-delete -f "venv27"
+  run govenv-virtualenv-delete -f "venv27"
 
   assert_success
 
-  unstub pyenv-rehash
+  unstub govenv-rehash
 
-  [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
-  [ ! -L "${PYENV_ROOT}/versions/venv27" ]
+  [ ! -d "${GOVENV_ROOT}/versions/2.7.11/envs/venv27" ]
+  [ ! -L "${GOVENV_ROOT}/versions/venv27" ]
 }
 
 @test "delete virtualenv with symlink" {
-  mkdir -p "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
-  ln -fs "${PYENV_ROOT}/versions/2.7.11/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/2.7.11/envs/venv27"
+  ln -fs "${GOVENV_ROOT}/versions/2.7.11/envs/venv27" "${GOVENV_ROOT}/versions/venv27"
 
-  stub pyenv-rehash "true"
+  stub govenv-rehash "true"
 
-  run pyenv-virtualenv-delete -f "2.7.11/envs/venv27"
+  run govenv-virtualenv-delete -f "2.7.11/envs/venv27"
 
   assert_success
 
-  unstub pyenv-rehash
+  unstub govenv-rehash
 
-  [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
-  [ ! -L "${PYENV_ROOT}/versions/venv27" ]
+  [ ! -d "${GOVENV_ROOT}/versions/2.7.11/envs/venv27" ]
+  [ ! -L "${GOVENV_ROOT}/versions/venv27" ]
 }
 
 @test "not delete virtualenv with different symlink" {
-  mkdir -p "${PYENV_ROOT}/versions/2.7.8/envs/venv27"
-  mkdir -p "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
-  ln -fs "${PYENV_ROOT}/versions/2.7.8/envs/venv27" "${PYENV_ROOT}/versions/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/2.7.8/envs/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/2.7.11/envs/venv27"
+  ln -fs "${GOVENV_ROOT}/versions/2.7.8/envs/venv27" "${GOVENV_ROOT}/versions/venv27"
 
-  stub pyenv-rehash "true"
+  stub govenv-rehash "true"
 
-  run pyenv-virtualenv-delete -f "2.7.11/envs/venv27"
+  run govenv-virtualenv-delete -f "2.7.11/envs/venv27"
 
   assert_success
 
-  unstub pyenv-rehash
+  unstub govenv-rehash
 
-  [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
-  [ -L "${PYENV_ROOT}/versions/venv27" ]
+  [ ! -d "${GOVENV_ROOT}/versions/2.7.11/envs/venv27" ]
+  [ -L "${GOVENV_ROOT}/versions/venv27" ]
 }
 
 @test "not delete virtualenv with same name" {
-  mkdir -p "${PYENV_ROOT}/versions/2.7.11/envs/venv27"
-  mkdir -p "${PYENV_ROOT}/versions/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/2.7.11/envs/venv27"
+  mkdir -p "${GOVENV_ROOT}/versions/venv27"
 
-  stub pyenv-rehash "true"
+  stub govenv-rehash "true"
 
-  run pyenv-virtualenv-delete -f "2.7.11/envs/venv27"
+  run govenv-virtualenv-delete -f "2.7.11/envs/venv27"
 
   assert_success
 
-  unstub pyenv-rehash
+  unstub govenv-rehash
 
-  [ ! -d "${PYENV_ROOT}/versions/2.7.11/envs/venv27" ]
-  [ -d "${PYENV_ROOT}/versions/venv27" ]
+  [ ! -d "${GOVENV_ROOT}/versions/2.7.11/envs/venv27" ]
+  [ -d "${GOVENV_ROOT}/versions/venv27" ]
 }
