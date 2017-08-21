@@ -22,6 +22,21 @@ resolve_link() {
   $(type -p greadlink readlink | head -1) "$1"
 }
 
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+  echo $path 1>&2
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
 unset FORCE
 unset QUIET
 
@@ -53,7 +68,7 @@ while [ $# -gt 0 ]; do
 done
 
 no_shell=
-versions=("$@")
+versions=("$@") # all arguments 가 array 형태로 대입된다
 if [ -z "${versions}" ]; then
   no_shell=1
   OLDIFS="$IFS"
@@ -121,6 +136,11 @@ if [ -L "${prefix}" ]; then
   prefix="$(resolve_link "${prefix}" 2>/dev/null)"
 fi
 
+if [ -L "${prefix}" ]; then
+  go_prefix="$(resolve_link "${prefix}" 2>/dev/null)"
+  echo $go_prefix 1>&2
+fi
+
 # exit as success if the virtualenv is already activated
 if [[ "${VIRTUAL_ENV}" == "${prefix}" ]]; then
   if [ -z "${FORCE}" ]; then
@@ -148,12 +168,14 @@ if [ -z "$no_shell" ]; then
     cat <<EOS
 set -gx GOVENV_VERSION "${versions[*]}";
 set -gx GOVENV_ACTIVATE_SHELL 1;
+set -gx GOPATH "${go_prefix}";
 EOS
     ;;
   * )
     cat <<EOS
 export GOVENV_VERSION="${versions[*]}";
 export GOVENV_ACTIVATE_SHELL=1;
+export GOPATH="${go_prefix}";
 EOS
     ;;
   esac
@@ -176,40 +198,6 @@ EOS
   ;;
 esac
 
-# anaconda/miniconda
-if [ -x "${prefix}/bin/conda" ]; then
-  if [[ "${prefix}" != "${prefix%/envs/*}" ]]; then
-    CONDA_DEFAULT_ENV="${venv##*/envs/}"
-  else
-    CONDA_DEFAULT_ENV="root"
-  fi
-  case "${shell}" in
-  fish )
-    echo "set -gx CONDA_DEFAULT_ENV \"${CONDA_DEFAULT_ENV}\";"
-    ;;
-  * )
-    echo "export CONDA_DEFAULT_ENV=\"${CONDA_DEFAULT_ENV}\";"
-    ;;
-  esac
-fi
-
-if [ -n "${PYTHONHOME}" ]; then
-  case "${shell}" in
-  fish )
-    cat <<EOS
-set -gx _OLD_VIRTUAL_PYTHONHOME "${PYTHONHOME}";
-set -e PYTHONHOME;
-EOS
-    ;;
-  * )
-    cat <<EOS
-export _OLD_VIRTUAL_PYTHONHOME="${PYTHONHOME}";
-unset PYTHONHOME;
-EOS
-    ;;
-  esac
-fi
-
 GOVENV_VIRTUALENV_DISABLE_PROMPT="${GOVENV_VIRTUALENV_DISABLE_PROMPT:-${GOVENV_VIRTUAL_ENV_DISABLE_PROMPT}}"
 GOVENV_VIRTUALENV_DISABLE_PROMPT="${GOVENV_VIRTUALENV_DISABLE_PROMPT:-${VIRTUAL_ENV_DISABLE_PROMPT}}"
 
@@ -226,26 +214,8 @@ if [ -z "${GOVENV_VIRTUALENV_DISABLE_PROMPT}" ]; then
     fi
     cat <<EOS
 export _OLD_VIRTUAL_PS1="\${PS1}";
-export PS1="(${venv}) \${PS1}";
+export PS1="(go:${venv}) \${PS1}";
 EOS
     ;;
   esac
-fi
-
-# conda package anaconda/miniconda scripts (#173)
-if [ -x "${prefix}/bin/conda" ]; then
-  shopt -s nullglob
-  case "${shell}" in
-  fish )
-    : # conda doesn't support fish
-    ;;
-  * )
-    CONDA_PREFIX="$prefix"
-    echo "export CONDA_PREFIX=\"${CONDA_PREFIX}\";"
-    for script in "${prefix}/etc/conda/activate.d"/*.sh; do
-      echo ". \"${script}\";"
-    done
-    ;;
-  esac
-  shopt -u nullglob
 fi

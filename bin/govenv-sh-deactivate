@@ -83,12 +83,14 @@ if [ -n "${GOVENV_ACTIVATE_SHELL}" ]; then
     cat <<EOS
 set -e GOVENV_VERSION;
 set -e GOVENV_ACTIVATE_SHELL;
+set -e GOPATH;
 EOS
     ;;
   * )
     cat <<EOS
 unset GOVENV_VERSION;
 unset GOVENV_ACTIVATE_SHELL;
+unset GOPATH;
 EOS
     ;;
   esac
