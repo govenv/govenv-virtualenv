@@ -25,7 +25,6 @@ resolve_link() {
 abs_dirname() {
   local cwd="$(pwd)"
   local path="$1"
-  echo $path 1>&2
 
   while [ -n "$path" ]; do
     cd "${path%/*}"
@@ -138,7 +137,6 @@ fi
 
 if [ -L "${prefix}" ]; then
   go_prefix="$(resolve_link "${prefix}" 2>/dev/null)"
-  echo $go_prefix 1>&2
 fi
 
 # exit as success if the virtualenv is already activated
