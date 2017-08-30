@@ -230,6 +230,10 @@ trap cleanup SIGINT
 # Invoke virtualenv and record exit status in $STATUS.
 STATUS=0
 
+if ! [[ -d "${GOVENV_ROOT}/versions/${GOVENV_VERSION}/envs" ]]; then
+  mkdir -p "${GOVENV_ROOT}/versions/${GOVENV_VERSION}/envs"
+fi
+
 mkdir -p "${GOVEVN_CWD}/${VIRTUALENV_NAME##*/}"
 CFG_PATH="${GOVEVN_CWD}/${VIRTUALENV_NAME##*/}/govenv.cfg"
 touch "${CFG_PATH}"
